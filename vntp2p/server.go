@@ -103,6 +103,9 @@ type Server struct {
 	peerOpDone chan struct{}
 
 	protomap map[string][]Protocol
+
+	closing bool
+	closeLock sync.Mutex
 }
 
 type peerOpFunc func(map[peer.ID]*Peer)
@@ -119,6 +122,15 @@ type peerDrop struct {
 	*Peer
 	err       error
 	requested bool // true if signaled by the peer
+}
+
+// set closing flag to true to indicate that this server
+// will no longer handle new inbound msg
+func (server *Server) Close() {
+	log.Info("P2P server is being closed...")
+	server.closeLock.Lock()
+	defer server.closeLock.Unlock()
+	server.closing = true
 }
 
 func (server *Server) Start() error {
@@ -287,6 +299,7 @@ func (server *Server) run(ctx context.Context, tasker taskworker) {
 
 func (server *Server) Stop() {
 	log.Info("Server is Stopping!")
+	close(server.quit)
 	defer server.cancel()
 	return
 }

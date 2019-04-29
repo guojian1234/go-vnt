@@ -42,6 +42,14 @@ type Protocol struct {
 // HandleStream handle all message which is from anywhere
 func (server *Server) HandleStream(s inet.Stream) {
 	for {
+		// short circuit if the server is closing
+		server.closeLock.Lock()
+		if server.closing {
+			log.Info("The p2p server is closing, no longer handle stream.")
+			return
+		}
+		server.closeLock.Unlock()
+
 		log.Info("p2p-test, stream data comming")
 		peer := server.GetPeerByRemoteID(s)
 		if peer == nil {
