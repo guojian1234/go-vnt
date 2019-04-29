@@ -275,8 +275,13 @@ func (server *Server) run(ctx context.Context, tasker taskworker) {
 		case pd := <-server.delpeer:
 			// A peer disconnected.
 
-			log.Info("Removing p2p peer", "peers", pd.RemoteID())
-			delete(peers, pd.RemoteID())
+			pid := pd.RemoteID()
+			log.Info("Removing p2p peer", "peer", pid)
+			if p, ok := peers[pid]; ok {
+				log.Info("Free peer stream", "peer", pid)
+				p.rw = nil
+				delete(peers, pid)
+			}
 		}
 	}
 }
@@ -405,6 +410,7 @@ func (server *Server) maxDialedConns() int {
 	return server.MaxPeers / r
 }
 
+// SetupStream 主动发起连接
 func (server *Server) SetupStream(ctx context.Context, target peer.ID, pid string) error {
 	// log.Info("p2p-test", "SetupStream target", target, "pid", pid)
 	s, err := server.host.NewStream(ctx, target, protocol.ID(pid))

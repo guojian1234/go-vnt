@@ -40,6 +40,7 @@ type Protocol struct {
 }
 
 // HandleStream handle all message which is from anywhere
+// 主、被动连接都走的流程
 func (server *Server) HandleStream(s inet.Stream) {
 	for {
 		log.Info("p2p-test, stream data comming")
