@@ -278,15 +278,15 @@ func (server *Server) run(ctx context.Context, tasker taskworker) {
 
 			pid := pd.RemoteID()
 			log.Info("Removing p2p peer", "peer", pid.ToString())
-			if _, ok := peers[pid]; ok {
-				log.Info("Free peer stream", "peer", pid.ToString())
-				// p.rw = nil
+			if p, ok := peers[pid]; ok {
+				log.Info("Reset peer stream", "peer", pid.ToString())
+				p.Reset()
 				delete(peers, pid)
 			}
 		case <-closePeerTimer.C:
 			for pid, p := range peers {
-				log.Warn("Close and remove", "peer", pid.ToString())
-				p.rw.Close()
+				log.Warn("Reset and remove", "peer", pid.ToString())
+				p.Reset()
 				delete(peers, pid)
 			}
 		}

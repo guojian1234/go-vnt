@@ -177,8 +177,19 @@ func parseMultiaddr(maddr ma.Multiaddr) net.Addr {
 
 func (p *Peer) Disconnect(reason DiscReason) {
 	// test for it
-	p.rw.Conn().Close()
+	// p.rw.Conn().Close()
 	// p.rw.Close()
+
+	p.Reset()
+}
+
+// Reset Close both direction. Use this to tell the remote side to hang up and go away.
+func (p *Peer) Reset() {
+	if err := p.rw.Reset(); err != nil {
+		log.Debug("Reset peer connection", "peer", p.RemoteID().ToString(), "error", err.Error())
+	} else {
+		log.Debug("Reset peer connection success", "peer", p.RemoteID().ToString())
+	}
 }
 
 func (p *Peer) Info() *PeerInfo {
@@ -215,7 +226,9 @@ func (p *Peer) run() (remoteRequested bool, err error) {
 	remoteRequested = true
 
 	p.closed = true
-	p.rw.Close()
+
+	p.Reset()
+
 	//log.Info("p2p-test remote peer request close, but we need to wait for other protocol", "peerid", p.RemoteID())
 	//p.wg.Wait()
 	log.Info("p2p-test wait complete!", "peerid", p.RemoteID())
