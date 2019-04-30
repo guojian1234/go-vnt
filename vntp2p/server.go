@@ -23,6 +23,7 @@ import (
 	"fmt"
 	"net"
 	"sync"
+	"time"
 
 	libp2p "github.com/libp2p/go-libp2p"
 	p2phost "github.com/libp2p/go-libp2p-host"
@@ -36,7 +37,6 @@ import (
 	peerstore "github.com/libp2p/go-libp2p-peerstore"
 	ma "github.com/multiformats/go-multiaddr"
 	// kb "github.com/libp2p/go-libp2p-kbucket"
-	// "time"
 )
 
 const (
@@ -236,6 +236,7 @@ func (server *Server) run(ctx context.Context, tasker taskworker) {
 		}
 	}
 
+	closePeerTimer := time.NewTicker(time.Second)
 	for {
 		scheduleTasks()
 
@@ -276,10 +277,16 @@ func (server *Server) run(ctx context.Context, tasker taskworker) {
 			// A peer disconnected.
 
 			pid := pd.RemoteID()
-			log.Info("Removing p2p peer", "peer", pid)
-			if p, ok := peers[pid]; ok {
-				log.Info("Free peer stream", "peer", pid)
-				p.rw = nil
+			log.Info("Removing p2p peer", "peer", pid.ToString())
+			if _, ok := peers[pid]; ok {
+				log.Info("Free peer stream", "peer", pid.ToString())
+				// p.rw = nil
+				delete(peers, pid)
+			}
+		case closePeerTimer.C:
+			for pid, p := range peers {
+				log.Warn("Close and remove", "peer", pid.ToString())
+				p.rw.Close()
 				delete(peers, pid)
 			}
 		}
