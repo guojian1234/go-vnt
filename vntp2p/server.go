@@ -283,7 +283,7 @@ func (server *Server) run(ctx context.Context, tasker taskworker) {
 				// p.rw = nil
 				delete(peers, pid)
 			}
-		case closePeerTimer.C:
+		case <-closePeerTimer.C:
 			for pid, p := range peers {
 				log.Warn("Close and remove", "peer", pid.ToString())
 				p.rw.Close()
