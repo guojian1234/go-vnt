@@ -66,7 +66,7 @@ type Config struct {
 // This function consumes the config. Do not reuse it (really!).
 func (cfg *Config) NewNode(ctx context.Context) (host.Host, error) {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("swarm.go:NewNode() caller: %s-%d \n", file, line)
+	fmt.Printf("4. config.go:NewNode() caller: %s-%d \n", file, line)
 
 	// Check this early. Prevents us from even *starting* without verifying this.
 	if pnet.ForcePrivateNetwork && cfg.Protector == nil {
@@ -157,6 +157,7 @@ func (cfg *Config) NewNode(ctx context.Context) (host.Host, error) {
 
 	// TODO: This method succeeds if listening on one address succeeds. We
 	// should probably fail if listening on *any* addr fails.
+	fmt.Printf("4. config.go: nework=%v, addresses=%v", h.Network(), cfg.ListenAddrs)
 	if err := h.Network().Listen(cfg.ListenAddrs...); err != nil {
 		h.Close()
 		return nil, err

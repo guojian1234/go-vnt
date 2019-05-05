@@ -18,6 +18,8 @@ import (
 	ma "github.com/multiformats/go-multiaddr"
 	madns "github.com/multiformats/go-multiaddr-dns"
 	msmux "github.com/multiformats/go-multistream"
+	"fmt"
+	"runtime"
 )
 
 var log = logging.Logger("basichost")
@@ -101,6 +103,8 @@ type HostOpts struct {
 
 // NewHost constructs a new *BasicHost and activates it by attaching its stream and connection handlers to the given inet.Network.
 func NewHost(ctx context.Context, net inet.Network, opts *HostOpts) (*BasicHost, error) {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("5.2. swarm.go:NewSwarm() caller: %s-%d \n", file, line)
 	h := &BasicHost{
 		network:    net,
 		mux:        msmux.NewMultistreamMuxer(),

@@ -2,6 +2,7 @@ package swarm
 
 import (
 	"fmt"
+	"runtime"
 
 	inet "github.com/libp2p/go-libp2p-net"
 	ma "github.com/multiformats/go-multiaddr"
@@ -10,6 +11,9 @@ import (
 // Listen sets up listeners for all of the given addresses.
 // It returns as long as we successfully listen on at least *one* address.
 func (s *Swarm) Listen(addrs ...ma.Multiaddr) error {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("5. swarm_listen.go:Listen(): %s-%d \n", file, line)
+
 	errs := make([]error, len(addrs))
 	var succeeded int
 	for i, a := range addrs {
@@ -36,6 +40,9 @@ func (s *Swarm) Listen(addrs ...ma.Multiaddr) error {
 // AddListenAddr tells the swarm to listen on a single address. Unlike Listen,
 // this method does not attempt to filter out bad addresses.
 func (s *Swarm) AddListenAddr(a ma.Multiaddr) error {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("6. swarm_listen.go:AddListenAddr() caller: %s-%d \n", file, line)
+
 	tpt := s.TransportForListening(a)
 	if tpt == nil {
 		return ErrNoTransport

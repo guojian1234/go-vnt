@@ -2,6 +2,7 @@ package yamux
 
 import (
 	"fmt"
+	"runtime"
 	"io"
 	"os"
 	"time"
@@ -64,6 +65,8 @@ func VerifyConfig(config *Config) error {
 // There must be at most one server-side connection. If a nil config is
 // provided, the DefaultConfiguration will be used.
 func Server(conn io.ReadWriteCloser, config *Config) (*Session, error) {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("15. mux.go:Server() caller: %s-%d \n", file, line)
 	if config == nil {
 		config = DefaultConfig()
 	}

@@ -12,6 +12,7 @@ import (
 	"sync"
 	"sync/atomic"
 	"time"
+	"runtime"
 )
 
 // Session is used to wrap a reliable ordered connection and to
@@ -86,6 +87,8 @@ type sendReady struct {
 
 // newSession is used to construct a new session
 func newSession(config *Config, conn io.ReadWriteCloser, client bool) *Session {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("16. session.go:newSession() caller: %s-%d \n", file, line)
 	s := &Session{
 		config:     config,
 		logger:     log.New(config.LogOutput, "", log.LstdFlags),
@@ -403,6 +406,8 @@ func (s *Session) send() {
 
 // recv is a long running goroutine that accepts new data
 func (s *Session) recv() {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("17 . session.go:newSession() caller: %s-%d \n", file, line)
 	if err := s.recvLoop(); err != nil {
 		s.exitErr(err)
 	}
@@ -410,6 +415,8 @@ func (s *Session) recv() {
 
 // recvLoop continues to receive data until a fatal error is encountered
 func (s *Session) recvLoop() error {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("18 . session.go:newSession() caller: %s-%d \n", file, line)
 	defer close(s.recvDoneCh)
 	hdr := header(make([]byte, headerSize))
 	var handler func(header) error
@@ -451,6 +458,8 @@ func (s *Session) recvLoop() error {
 
 // handleStreamMessage handles either a data or window update frame
 func (s *Session) handleStreamMessage(hdr header) error {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("19 . session.go:newSession() caller: %s-%d \n", file, line)
 	// Check for a new stream creation
 	id := hdr.StreamID()
 	flags := hdr.Flags()

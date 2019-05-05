@@ -89,7 +89,7 @@ type Swarm struct {
 // NewSwarm constructs a Swarm
 func NewSwarm(ctx context.Context, local peer.ID, peers pstore.Peerstore, bwc metrics.Reporter) *Swarm {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("swarm.go:NewSwarm() caller: %s-%d \n", file, line)
+	fmt.Printf("5.1. swarm.go:NewSwarm() caller: %s-%d \n", file, line)
 
 	s := &Swarm{
 		local:   local,

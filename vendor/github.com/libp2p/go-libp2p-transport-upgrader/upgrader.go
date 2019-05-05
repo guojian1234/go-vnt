@@ -34,6 +34,8 @@ type Upgrader struct {
 
 // UpgradeListener upgrades the passed multiaddr-net listener into a full libp2p-transport listener.
 func (u *Upgrader) UpgradeListener(t transport.Transport, list manet.Listener) transport.Listener {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("8. upgrader.go:UpgradeListener() caller: %s-%d \n", file, line)
 	ctx, cancel := context.WithCancel(context.Background())
 	l := &listener{
 		Listener:  list,
@@ -63,13 +65,13 @@ func (u *Upgrader) UpgradeOutbound(ctx context.Context, t transport.Transport, m
 // full libp2p-transport connection.
 func (u *Upgrader) UpgradeInbound(ctx context.Context, t transport.Transport, maconn manet.Conn) (transport.Conn, error) {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("upgrader.go:Upgrader.UpgradeInbound() caller: %s-%d \n", file, line)
+	fmt.Printf("10. upgrader.go:Upgrader.UpgradeInbound() caller: %s-%d \n", file, line)
 	return u.upgrade(ctx, t, maconn, "")
 }
 
 func (u *Upgrader) upgrade(ctx context.Context, t transport.Transport, maconn manet.Conn, p peer.ID) (transport.Conn, error) {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("upgrader.go:Upgrader.upgrade() caller: %s-%d \n", file, line)
+	fmt.Printf("11. upgrader.go:Upgrader.upgrade() caller: %s-%d \n", file, line)
 	if u.Filters != nil && u.Filters.AddrBlocked(maconn.RemoteMultiaddr()) {
 		log.Debugf("blocked connection from %s", maconn.RemoteMultiaddr())
 		maconn.Close()
@@ -117,7 +119,7 @@ func (u *Upgrader) setupSecurity(ctx context.Context, conn net.Conn, p peer.ID) 
 func (u *Upgrader) setupMuxer(ctx context.Context, conn net.Conn, p peer.ID) (smux.Conn, error) {
 	// TODO: The muxer should take a context.
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("upgrader.go:Upgrader.setupMuxer() caller: %s-%d \n", file, line)
+	fmt.Printf("12. upgrader.go:Upgrader.setupMuxer() caller: %s-%d \n", file, line)
 	done := make(chan struct{})
 
 	var smconn smux.Conn

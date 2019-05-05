@@ -211,7 +211,7 @@ func recoverPeerInfosAndBuckets(ctx context.Context, pd *dht.PersistentData, hos
 
 func constructPeerHost(ctx context.Context, listenstring string, nodekey *ecdsa.PrivateKey, restrictList []*net.IPNet, natm libp2p.Option) (p2phost.Host, error) {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("host.go:constructPeerHost() caller: %s-%d \n", file, line)
+	fmt.Printf("1. host.go:constructPeerHost(), caller: %s-%d \n", file, line)
 
 	var options []libp2p.Option
 	if nodekey != nil {

@@ -3,6 +3,7 @@ package stream
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"sync"
 
 	logging "github.com/ipfs/go-log"
@@ -59,6 +60,8 @@ func (l *listener) Close() error {
 //    been fully negotiated but not accepted. This gives us a basic backpressure
 //    mechanism while still allowing us to negotiate connections in parallel.
 func (l *listener) handleIncoming() {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("9. listener.go:handleIncoming() caller: %s-%d \n", file, line)
 	var wg sync.WaitGroup
 	defer func() {
 		// make sure we're closed

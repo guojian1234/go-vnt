@@ -4,6 +4,7 @@ package websocket
 import (
 	"context"
 	"fmt"
+	"runtime"
 	"net"
 	"net/http"
 	"net/url"
@@ -131,6 +132,8 @@ func (t *WebsocketTransport) maListen(a ma.Multiaddr) (manet.Listener, error) {
 }
 
 func (t *WebsocketTransport) Listen(a ma.Multiaddr) (tpt.Listener, error) {
+	_,file,line,_ := runtime.Caller(1)
+	fmt.Printf("7. websocket.go:Listen() caller: %s-%d \n", file, line)
 	malist, err := t.maListen(a)
 	if err != nil {
 		return nil, err

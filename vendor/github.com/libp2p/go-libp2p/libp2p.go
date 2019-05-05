@@ -35,7 +35,7 @@ func ChainOptions(opts ...Option) Option {
 // Canceling the passed context will stop the returned libp2p node.
 func New(ctx context.Context, opts ...Option) (host.Host, error) {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("libp2p.go:New() caller: %s-%d \n", file, line)
+	fmt.Printf("2. libp2p.go:New() caller: %s-%d \n", file, line)
 
 	return NewWithoutDefaults(ctx, append(opts, FallbackDefaults)...)
 }
@@ -48,7 +48,7 @@ func New(ctx context.Context, opts ...Option) (host.Host, error) {
 // opt-out of any defaults we may provide.
 func NewWithoutDefaults(ctx context.Context, opts ...Option) (host.Host, error) {
 	_,file,line,_ := runtime.Caller(1)
-	fmt.Printf("libp2p.go:NewWithoutDefaults() caller: %s-%d \n", file, line)
+	fmt.Printf("3. libp2p.go:NewWithoutDefaults() caller: %s-%d \n", file, line)
 
 	var cfg Config
 	if err := cfg.Apply(opts...); err != nil {
