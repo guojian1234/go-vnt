@@ -25,6 +25,8 @@ import (
 	"io/ioutil"
 	"time"
 
+	"github.com/pkg/errors"
+
 	inet "github.com/libp2p/go-libp2p-net"
 	"github.com/vntchain/go-vnt/log"
 	"github.com/vntchain/go-vnt/rlp"
@@ -168,6 +170,7 @@ type VNTMessenger struct {
 	protocol    Protocol
 	in          chan Msg
 	err         chan error
+	quit        chan struct{}
 	w           inet.Stream
 	peerPointer *Peer
 }
@@ -201,6 +204,8 @@ func (rw *VNTMessenger) WriteMsg(msg Msg) (err error) {
 	return nil
 }
 
+var P2PStreamCloseError = errors.New("stream closed")
+
 // ReadMsg implement MsgReadWriter interface
 func (rw *VNTMessenger) ReadMsg() (Msg, error) {
 	select {
@@ -209,6 +214,8 @@ func (rw *VNTMessenger) ReadMsg() (Msg, error) {
 		return msg, nil
 	case err := <-rw.err:
 		return Msg{}, err
+	case <-rw.quit:
+		return Msg{}, P2PStreamCloseError
 	}
 }
 

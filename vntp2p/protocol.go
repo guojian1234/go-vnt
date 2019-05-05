@@ -42,17 +42,22 @@ type Protocol struct {
 // HandleStream handle all message which is from anywhere
 // 主、被动连接都走的流程
 func (server *Server) HandleStream(s inet.Stream) {
+	log.Info("HandleStream")
+	defer log.Info("Handle Stream exit")
+
+	// peer信息只获取1次即可
+	log.Info("p2p-test, stream data comming")
+	peer := server.GetPeerByRemoteID(s)
+	if peer == nil {
+		log.Info("HandleStream", "localPeerID", s.Conn().LocalPeer(), "remotePeerID", s.Conn().RemotePeer(), "this remote peer is nil, don't handle it")
+		return
+	}
+
 	for {
-		log.Info("p2p-test, stream data comming")
-		peer := server.GetPeerByRemoteID(s)
-		if peer == nil {
-			log.Info("HandleStream", "localPeerID", s.Conn().LocalPeer(), "remotePeerID", s.Conn().RemotePeer(), "this remote peer is nil, don't handle it")
-			return
-		}
 		msgHeaderByte := make([]byte, MessageHeaderLength)
 		_, err := io.ReadFull(s, msgHeaderByte)
 		if err != nil {
-			//log.Error("handleStream", "read error", err)
+			log.Error("handleStream", "read header error", err)
 			notifyError(peer.messenger, err)
 			return
 		}
@@ -103,5 +108,6 @@ func notifyError(messengers map[string]*VNTMessenger, err error) {
 	defer log.Error("notifyError exit")
 	for _, m := range messengers {
 		m.err <- err
+		close(m.quit)
 	}
 }
