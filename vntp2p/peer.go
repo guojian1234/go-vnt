@@ -97,7 +97,7 @@ func newPeer(conn *Stream) *Peer {
 		vntMessenger := &VNTMessenger{
 			protocol: proto,
 			in:       make(chan Msg),
-			err:      make(chan error),
+			err:      make(chan error, 100),
 			w:        conn.Conn,
 		}
 		m[proto.Name] = vntMessenger
